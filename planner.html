@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Planner - Exam Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-display { font-family: 'Playfair Display', serif; }
+        
+        .date-nav { transition: all 0.3s ease; }
+        .date-nav:hover { transform: scale(1.1); }
+        .date-nav:active { transform: scale(0.95); }
+        
+        .task-item { transition: all 0.3s ease; }
+        .task-item:active { transform: scale(0.98); }
+        .task-item.completed { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        
+        .critical-day { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .warning-day { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .focus-day { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .neutral-day { background: linear-gradient(135deg, #374151, #4b5563); }
+        
+        .phase-front { border-left: 4px solid #2563eb; }
+        .phase-device { border-left: 4px solid #ea580c; }
+        .phase-computation { border-left: 4px solid #16a34a; }
+        .phase-exam { border-left: 4px solid #dc2626; }
+        
+        .exam-card { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        
+        .strategic-timeline { background: linear-gradient(90deg, #2563eb 0%, #ea580c 33%, #16a34a 66%, #dc2626 100%); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <div class="bg-gray-800 border-b border-gray-700 px-4 py-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="font-display text-2xl font-bold text-white">Strategic Planner</h1>
+                <p class="text-gray-400 text-sm">Tactical Study Operations</p>
+            </div>
+            <div class="text-right">
+                <div class="text-sm font-mono text-red-400">T-9 Days</div>
+                <div class="text-xs text-gray-400">To Double Header</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Navigation -->
+    <div class="px-4 py-6">
+        <div class="flex items-center justify-between mb-6">
+            <button id="prev-date" class="date-nav w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+                <span class="text-white">←</span>
+            </button>
+            
+            <div class="text-center">
+                <div class="text-xl font-mono text-white" id="current-date">Nov 22, 2024</div>
+                <div class="text-sm text-gray-400" id="current-day">Friday</div>
+                <div class="text-xs text-blue-400" id="current-phase">Phase 1: Front-Loading</div>
+            </div>
+            
+            <button id="next-date" class="date-nav w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+                <span class="text-white">→</span>
+            </button>
+        </div>
+
+        <!-- Strategic Timeline -->
+        <div class="strategic-timeline h-1 rounded-full mb-6"></div>
+
+        <!-- Daily Tasks -->
+        <div class="mb-6">
+            <h3 class="font-semibold text-white mb-4" id="daily-title">Nov 22 - Critical Front-Loading</h3>
+            
+            <!-- Task List -->
+            <div class="space-y-3" id="task-list">
+                <!-- Tasks will be dynamically loaded -->
+            </div>
+        </div>
+
+        <!-- Study Phase Info -->
+        <div class="mb-6">
+            <h3 class="font-semibold text-white mb-4">Phase Strategy</h3>
+            <div class="bg-gray-800 rounded-lg p-4" id="phase-info">
+                <div class="text-sm text-gray-300" id="phase-description">
+                    <strong class="text-blue-400">Phase 1: Front-Loading (Nov 22-24)</strong><br>
+                    ⚠️ CRITICAL: Study Computational Statistics and Software Engineering NOW. 
+                    Zero gap days before Dec 1st exams. If you don't study these subjects now, 
+                    you will panic on Nov 30th with no time to learn.
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Alerts -->
+        <div class="mb-20">
+            <h3 class="font-semibold text-white mb-4">Exam Alerts</h3>
+            <div class="space-y-3" id="exam-alerts">
+                <!-- Alerts will be dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-4 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <a href="index.html" class="flex flex-col items-center py-2 text-gray-400">
+                <div class="w-6 h-6 mb-1">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                    </svg>
+                </div>
+                <span class="text-xs">Command</span>
+            </a>
+            <a href="planner.html" class="flex flex-col items-center py-2 text-blue-400">
+                <div class="w-6 h-6 mb-1">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
+                    </svg>
+                </div>
+                <span class="text-xs">Planner</span>
+            </a>
+            <a href="progress.html" class="flex flex-col items-center py-2 text-gray-400">
+                <div class="w-6 h-6 mb-1">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                    </svg>
+                </div>
+                <span class="text-xs">Progress</span>
+            </a>
+            <a href="resources.html" class="flex flex-col items-center py-2 text-gray-400">
+                <div class="w-6 h-6 mb-1">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                    </svg>
+                </div>
+                <span class="text-xs">Resources</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Study schedule data
+        const studySchedule = {
+            '2024-11-22': {
+                day: 'Friday',
+                phase: 'Phase 1: Front-Loading',
+                title: 'Nov 22 - Critical Front-Loading',
+                description: '<strong class="text-blue-400">Phase 1: Front-Loading (Nov 22-24)</strong><br>⚠️ CRITICAL: Study Computational Statistics and Software Engineering NOW. Zero gap days before Dec 1st exams. If you don\'t study these subjects now, you will panic on Nov 30th with no time to learn.',
+                tasks: [
+                    { id: 'comp-stats-1', subject: 'Computational Statistics', topic: 'Hypothesis Testing', duration: 3, priority: 'critical', completed: false },
+                    { id: 'soft-eng-1', subject: 'Software Engineering', topic: 'Design Patterns', duration: 2, priority: 'critical', completed: false },
+                    { id: 'theory-comp-1', subject: 'Theory of Computation', topic: 'Regular Languages', duration: 1, priority: 'low', completed: false },
+                    { id: 'elec-dev-1', subject: 'Electronic Devices', topic: 'Semiconductors', duration: 1, priority: 'low', completed: false }
+                ],
+                alerts: [
+                    { type: 'critical', message: 'Double Header Dec 1st - ZERO gap days after Nov 30th exam!' },
+                    { type: 'warning', message: 'Electronic Devices exam in 5 days (Nov 27)' }
+                ]
+            },
+            '2024-11-23': {
+                day: 'Saturday',
+                phase: 'Phase 1: Front-Loading',
+                title: 'Nov 23 - Continue Front-Loading',
+                description: '<strong class="text-blue-400">Phase 1: Front-Loading Continued</strong><br>Keep pushing on Computational Statistics and Software Engineering. These are your highest priority subjects. Theory of Computation and Electronic Devices can wait until their designated phases.',
+                tasks: [
+                    { id: 'comp-stats-2', subject: 'Computational Statistics', topic: 'Regression Analysis', duration: 3, priority: 'critical', completed: false },
+                    { id: 'soft-eng-2', subject: 'Software Engineering', topic: 'Software Testing', duration: 2, priority: 'critical', completed: false },
+                    { id: 'theory-comp-2', subject: 'Theory of Computation', topic: 'Context-Free Grammars', duration: 1, priority: 'low', completed: false },
+                    { id: 'elec-dev-2', subject: 'Electronic Devices', topic: 'PN Junctions', duration: 1, priority: 'low', completed: false }
+                ],
+                alerts: [
+                    { type: 'critical', message: 'Only 4 days until Electronic Devices exam!' },
+                    { type: 'info', message: 'Tomorrow is last day for intensive front-loading' }
+                ]
+            },
+            '2024-11-24': {
+                day: 'Sunday',
+                phase: 'Phase 1: Front-Loading',
+                title: 'Nov 24 - Final Front-Loading Day',
+                description: '<strong class="text-blue-400">Phase 1: Final Day</strong><br>Last chance for intensive Computational Statistics and Software Engineering study before switching focus. Make every hour count - you won\'t have time to learn these subjects later.',
+                tasks: [
+                    { id: 'comp-stats-3', subject: 'Computational Statistics', topic: 'Bayesian Methods', duration: 3, priority: 'critical', completed: false },
+                    { id: 'soft-eng-3', subject: 'Software Engineering', topic: 'Project Management', duration: 2, priority: 'critical', completed: false },
+                    { id: 'theory-comp-3', subject: 'Theory of Computation', topic: 'Turing Machines', duration: 1, priority: 'low', completed: false },
+                    { id: 'elec-dev-3', subject: 'Electronic Devices', topic: 'Transistors', duration: 1, priority: 'low', completed: false }
+                ],
+                alerts: [
+                    { type: 'critical', message: 'Only 3 days until Electronic Devices exam!' },
+                    { type: 'warning', message: 'Tomorrow begins Device Tunnel phase' }
+                ]
+            },
+            '2024-11-25': {
+                day: 'Monday',
+                phase: 'Phase 2: Device Tunnel',
+                title: 'Nov 25 - Device Tunnel Begins',
+                description: '<strong class="text-orange-400">Phase 2: Device Tunnel (Nov 25-27)</strong><br>Switch focus entirely to Electronic Devices. You have 2 days to prepare for the Nov 27 exam. Computational Statistics and Software Engineering go to maintenance mode.',
+                tasks: [
+                    { id: 'elec-dev-4', subject: 'Electronic Devices', topic: 'Diode Circuits', duration: 3, priority: 'critical', completed: false },
+                    { id: 'elec-dev-5', subject: 'Electronic Devices', topic: 'Amplifier Design', duration: 2, priority: 'critical', completed: false },
+                    { id: 'comp-stats-maint', subject: 'Computational Statistics', topic: 'Quick Review', duration: 1, priority: 'maintenance', completed: false },
+                    { id: 'soft-eng-maint', subject: 'Software Engineering', topic: 'Quick Review', duration: 1, priority: 'maintenance', completed: false }
+                ],
+                alerts: [
+                    { type: 'critical', message: 'Electronic Devices exam in 2 days!' },
+                    { type: 'info', message: 'Focus switches to Electronic Devices completely' }
+                ]
+            },
+            '2024-11-26': {
+                day: 'Tuesday',
+                phase: 'Phase 2: Device Tunnel',
+                title: 'Nov 26 - Final Device Prep',
+                description: '<strong class="text-orange-400">Phase 2: Final Device Prep</strong><br>Last full day before Electronic Devices exam. Focus on practice problems and weak areas. Tomorrow is exam day - make sure you\'re ready.',
+                tasks: [
+                    { id: 'elec-dev-6', subject: 'Electronic Devices', topic: 'Practice Problems', duration: 3, priority: 'critical', completed: false },
+                    { id: 'elec-dev-7', subject: 'Electronic Devices', topic: 'Final Review', duration: 2, priority: 'critical', completed: false },
+                    { id: 'comp-stats-light', subject: 'Computational Statistics', topic: 'Light Review', duration: 1, priority: 'maintenance', completed: false },
+                    { id: 'soft-eng-light', subject: 'Software Engineering', topic: 'Light Review', duration: 1, priority: 'maintenance', completed: false }
+                ],
+                alerts: [
+                    { type: 'critical', message: 'Electronic Devices exam TOMORROW!' },
+                    { type: 'warning', message: 'Get good sleep tonight - exam performance critical' }
+                ]
+            },
+            '2024-11-27': {
+                day: 'Wednesday',
+                phase: 'Phase 2: Device Tunnel',
+                title: 'Nov 27 - ELECTRONIC DEVICES EXAM',
+                description: '<strong class="text-orange-400">EXAM DAY - Electronic Devices</strong><br>Take the exam. After completion, immediately switch focus to Theory of Computation preparation. Use remaining time for light review of other subjects.',
+                tasks: [
+                    { id: 'elec-dev-exam', subject: 'Electronic Devices', topic: 'EXAM', duration: 3, priority: 'exam', completed: false },
+                    { id: 'theory-comp-prep', subject: 'Theory of Computation', topic: 'Preparation', duration: 2, priority: 'critical', completed: false },
+                    { id: 'comp-stats-review', subject: 'Computational Statistics', topic: 'Review', duration: 1, priority: 'review', completed: false },
+                    { id: 'soft-eng-review', subject: 'Software Engineering', topic: 'Review', duration: 1, priority: 'review', completed: false }
+                ],
+                alerts: [
+                    { type: 'exam', message: 'ELECTRONIC DEVICES EXAM TODAY!' },
+                    { type: 'info', message: 'After exam, switch to Theory of Computation prep' }
+                ]
+            },
+            '2024-11-28': {
+                day: 'Thursday',
+                phase: 'Phase 3: Computation Bridge',
+                title: 'Nov 28 - Computation Bridge Begins',
+                description: '<strong class="text-green-400">Phase 3: Computation Bridge (Nov 28-29)</strong><br>Perfect timing! You have 2 full days to focus on Theory of Computation before the Dec 1st double header. Use these gap days wisely.',
+                tasks: [
+                    { id: 'theory-comp-4', subject: 'Theory of Computation', topic: 'Decidability', duration: 4, priority: 'critical', completed: false },
+                    { id: 'theory-comp-5', subject: 'Theory of Computation', topic: 'Complexity Theory', duration: 2, priority: 'critical', completed: false },
+                    { id: 'comp-stats-final', subject: 'Computational Statistics', topic: 'Final Review', duration: 1, priority: 'review', completed: false },
+                    { id: 'soft-eng-final', subject: 'Software Engineering', topic: 'Final Review', duration: 1, priority: 'review', completed: false }
+                ],
+                alerts: [
+                    { type: 'info', message: 'Perfect timing for Theory of Computation prep' },
+                    { type: 'warning', message: '3 days until double header exam day' }
+                ]
+            },
+            '2024-11-29': {
+                day: 'Friday',
+                phase: 'Phase 3: Computation Bridge',
+                title: 'Nov 29 - Final Computation Prep',
+                description: '<strong class="text-green-400">Phase 3: Final Computation Prep</strong><br>Last day before the double header. Focus on Theory of Computation practice problems and final review. Tomorrow is the big day - you\'re ready!',
+                tasks: [
+                    { id: 'theory-comp-6', subject: 'Theory of Computation', topic: 'Practice Problems', duration: 3, priority: 'critical', completed: false },
+                    { id: 'theory-comp-7', subject: 'Theory of Computation', topic: 'Final Review', duration: 2, priority: 'critical', completed: false },
+                    { id: 'comp-stats-brush', subject: 'Computational Statistics', topic: 'Brush-up', duration: 1, priority: 'review', completed: false },
+                    { id: 'soft-eng-brush', subject: 'Software Engineering', topic: 'Brush-up', duration: 1, priority: 'review', completed: false }
+                ],
+                alerts: [
+                    { type: 'critical', message: 'Double header exam TOMORROW!' },
+                    { type: 'info', message: 'You\'ve prepared strategically - now execute!' }
+                ]
+            },
+            '2024-11-30': {
+                day: 'Saturday',
+                phase: 'Phase 4: Final Day',
+                title: 'Nov 30 - Last Day Before Battle',
+                description: '<strong class="text-red-400">FINAL DAY - Double Header Tomorrow</strong><br>Last day for light review and mental preparation. No new learning - just reinforcement. Get good sleep and prepare for tomorrow\'s challenge.',
+                tasks: [
+                    { id: 'final-review-1', subject: 'All Subjects', topic: 'Light Review', duration: 2, priority: 'review', completed: false },
+                    { id: 'final-review-2', subject: 'All Subjects', topic: 'Formula Sheet Review', duration: 1, priority: 'review', completed: false },
+                    { id: 'mental-prep', subject: 'Mental Preparation', topic: 'Relaxation & Sleep', duration: 3, priority: 'critical', completed: false }
+                ],
+                alerts: [
+                    { type: 'exam', message: 'DOUBLE HEADER EXAM TOMORROW!' },
+                    { type: 'critical', message: 'Get good sleep - performance day!' }
+                ]
+            },
+            '2024-12-01': {
+                day: 'Sunday',
+                phase: 'Phase 4: Execution',
+                title: 'Dec 1 - DOUBLE HEADER EXAM DAY',
+                description: '<strong class="text-red-400">EXECUTION DAY - Double Header</strong><br>Computational Statistics and Software Engineering exams. You\'ve prepared strategically over the past 10 days. Time to execute and succeed!',
+                tasks: [
+                    { id: 'comp-stats-exam', subject: 'Computational Statistics', topic: 'EXAM', duration: 3, priority: 'exam', completed: false },
+                    { id: 'soft-eng-exam', subject: 'Software Engineering', topic: 'EXAM', duration: 3, priority: 'exam', completed: false },
+                    { id: 'victory-lap', subject: 'Celebration', topic: 'Mission Complete!', duration: 1, priority: 'celebration', completed: false }
+                ],
+                alerts: [
+                    { type: 'exam', message: 'DOUBLE HEADER EXAM DAY!' },
+                    { type: 'victory', message: 'Mission complete - strategic planning successful!' }
+                ]
+            }
+        };
+
+        let currentDate = new Date('2024-11-22');
+        const startDate = new Date('2024-11-22');
+        const endDate = new Date('2024-12-01');
+
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function getDateKey(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function loadDayData(date) {
+            const dateKey = getDateKey(date);
+            const dayData = studySchedule[dateKey];
+            
+            if (!dayData) return;
+            
+            // Update header
+            document.getElementById('current-date').textContent = formatDate(date);
+            document.getElementById('current-day').textContent = dayData.day;
+            document.getElementById('current-phase').textContent = dayData.phase;
+            document.getElementById('daily-title').textContent = dayData.title;
+            document.getElementById('phase-description').innerHTML = dayData.description;
+            
+            // Load tasks
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+            
+            dayData.tasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = `task-item bg-gray-800 rounded-lg p-4 mb-3 ${task.priority === 'critical' ? 'phase-front' : task.priority === 'exam' ? 'phase-exam' : 'border-l-4 border-gray-600'}`;
+                taskElement.dataset.taskId = task.id;
+                
+                if (task.completed) {
+                    taskElement.classList.add('completed');
+                }
+                
+                taskElement.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="font-medium text-white">${task.subject}</div>
+                            <div class="text-sm text-gray-400">${task.topic} - ${task.duration} hour${task.duration > 1 ? 's' : ''}</div>
+                            <div class="text-xs mt-1">
+                                ${task.priority === 'critical' ? '<span class="text-blue-400">⚠️ CRITICAL</span>' : 
+                                  task.priority === 'exam' ? '<span class="text-red-400">🎯 EXAM</span>' : 
+                                  task.priority === 'review' ? '<span class="text-green-400">📚 REVIEW</span>' : 
+                                  '<span class="text-gray-400">🔧 MAINTENANCE</span>'}
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="text-xs text-gray-400">${task.completed ? 'Done' : 'Pending'}</div>
+                            <button class="w-6 h-6 ${task.completed ? 'bg-green-600' : 'bg-blue-600'} rounded-full flex items-center justify-center text-white text-xs">
+                                ${task.completed ? '✓' : '▶'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                taskList.appendChild(taskElement);
+            });
+            
+            // Load alerts
+            const alertsContainer = document.getElementById('exam-alerts');
+            alertsContainer.innerHTML = '';
+            
+            dayData.alerts.forEach(alert => {
+                const alertElement = document.createElement('div');
+                alertElement.className = `${alert.type === 'critical' ? 'critical-day' : 
+                                           alert.type === 'warning' ? 'warning-day' : 
+                                           alert.type === 'exam' ? 'critical-day exam-card' : 'focus-day'} rounded-lg p-3`;
+                
+                const icon = alert.type === 'critical' ? '🚨' : 
+                            alert.type === 'warning' ? '⚠️' : 
+                            alert.type === 'exam' ? '🎯' : 'ℹ️';
+                
+                alertElement.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg">${icon}</span>
+                        <span class="text-sm text-white">${alert.message}</span>
+                    </div>
+                `;
+                
+                alertsContainer.appendChild(alertElement);
+            });
+            
+            // Add task completion functionality
+            document.querySelectorAll('.task-item').forEach(taskElement => {
+                taskElement.addEventListener('click', function() {
+                    const taskId = this.dataset.taskId;
+                    const dateKey = getDateKey(currentDate);
+                    
+                    // Find and toggle task completion
+                    const task = studySchedule[dateKey].tasks.find(t => t.id === taskId);
+                    if (task) {
+                        task.completed = !task.completed;
+                        loadDayData(currentDate); // Reload to update UI
+                        
+                        // Show completion animation
+                        if (task.completed) {
+                            anime({
+                                targets: this,
+                                scale: [1, 1.05, 1],
+                                duration: 300,
+                                easing: 'easeOutElastic(1, .8)'
+                            });
+                            
+                            showNotification(`${task.subject} task completed! 🎯`);
+                        }
+                    }
+                });
+            });
+        }
+
+        function navigateDate(direction) {
+            const newDate = new Date(currentDate);
+            newDate.setDate(newDate.getDate() + direction);
+            
+            if (newDate >= startDate && newDate <= endDate) {
+                currentDate = newDate;
+                loadDayData(currentDate);
+                
+                // Add navigation animation
+                anime({
+                    targets: '#task-list',
+                    translateX: [direction * 50, 0],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 left-4 right-4 bg-blue-600 rounded-lg shadow-lg p-4 z-50 transform -translate-y-full transition-transform duration-300';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="text-2xl">🎯</div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-white">Mission Update</div>
+                        <div class="text-xs text-blue-200">${message}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateY(-100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('prev-date').addEventListener('click', () => navigateDate(-1));
+        document.getElementById('next-date').addEventListener('click', () => navigateDate(1));
+
+        // Initialize
+        loadDayData(currentDate);
+    </script>
+</body>
+</html>

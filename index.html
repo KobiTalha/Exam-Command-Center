@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-display { font-family: 'Playfair Display', serif; }
+        
+        .critical-exam { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .warning-exam { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .focus-subject { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .completed-task { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        
+        .task-card { transition: all 0.3s ease; }
+        .task-card:active { transform: scale(0.98); }
+        .task-card.completed { transform: scale(1.02); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3); }
+        
+        .progress-ring { transform: rotate(-90deg); }
+        .progress-ring circle { transition: stroke-dashoffset 0.5s ease; }
+        
+        .exam-countdown { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        
+        .strategic-grid { background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0); background-size: 20px 20px; }
+        
+        .phase-indicator { border-left: 4px solid; }
+        .phase-front { border-color: #2563eb; }
+        .phase-device { border-color: #ea580c; }
+        .phase-computation { border-color: #16a34a; }
+        .phase-exam { border-color: #dc2626; }
+        
+        .floating-particles { position: absolute; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
+        .particle { position: absolute; background: rgba(37, 99, 235, 0.1); border-radius: 50%; animation: float 8s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px) translateX(0px); } 50% { transform: translateY(-30px) translateX(20px); } }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Floating Particles Background -->
+    <div class="floating-particles">
+        <div class="particle w-1 h-1" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
+        <div class="particle w-2 h-2" style="left: 30%; top: 40%; animation-delay: 2s;"></div>
+        <div class="particle w-1 h-1" style="left: 50%; top: 60%; animation-delay: 4s;"></div>
+        <div class="particle w-2 h-2" style="left: 70%; top: 30%; animation-delay: 6s;"></div>
+        <div class="particle w-1 h-1" style="left: 90%; top: 50%; animation-delay: 8s;"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="relative z-10 bg-gray-800 border-b border-gray-700 px-4 py-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="font-display text-2xl font-bold text-white">Exam Command Center</h1>
+                <p class="text-gray-400 text-sm">Strategic Study Operations</p>
+            </div>
+            <div class="text-right">
+                <div class="text-sm font-mono text-red-400">DEC 01 D-Day</div>
+                <div class="text-xs text-gray-400">T-9 Days</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Overview -->
+    <div class="relative z-10 px-4 py-6">
+        <div class="bg-gray-800 rounded-xl p-4 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold text-white">Today's Mission</h2>
+                <div class="text-right">
+                    <div class="text-sm font-mono text-blue-400" id="date-display">Nov 22, 2024</div>
+                    <div class="text-xs text-gray-400">Phase 1: Front-Load</div>
+                </div>
+            </div>
+            
+            <!-- Progress Ring -->
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="relative w-16 h-16">
+                    <svg class="progress-ring w-16 h-16" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="54" stroke="#374151" stroke-width="8" fill="transparent"/>
+                        <circle cx="60" cy="60" r="54" stroke="#3b82f6" stroke-width="8" fill="transparent" 
+                                stroke-dasharray="339.292" stroke-dashoffset="203.575" id="progress-circle"/>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-lg font-bold text-white" id="progress-percentage">60%</span>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm text-gray-300">Today's Progress</div>
+                    <div class="text-xs text-gray-400">3 of 5 tasks completed</div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-3 gap-3">
+                <div class="text-center">
+                    <div class="text-lg font-bold text-blue-400">5h</div>
+                    <div class="text-xs text-gray-400">Study Time</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-lg font-bold text-orange-400">3</div>
+                    <div class="text-xs text-gray-400">Subjects</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-lg font-bold text-green-400">2</div>
+                    <div class="text-xs text-gray-400">Completed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Tasks -->
+        <div class="mb-6">
+            <h3 class="font-semibold text-white mb-4">Critical Tasks - Nov 22</h3>
+            <div class="space-y-3">
+                <!-- Computational Statistics -->
+                <div class="task-card phase-front bg-gray-800 rounded-lg p-4 border-l-4 border-blue-500" data-task="comp-stats-1">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="font-medium text-white">Computational Statistics</div>
+                            <div class="text-sm text-gray-400">Hypothesis Testing - 3 hours</div>
+                            <div class="text-xs text-blue-400 mt-1">⚠️ CRITICAL: Study now or fail Dec 1st</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="text-xs text-gray-400">0/3h</div>
+                            <button class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">▶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Software Engineering -->
+                <div class="task-card phase-front bg-gray-800 rounded-lg p-4 border-l-4 border-blue-500" data-task="soft-eng-1">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="font-medium text-white">Software Engineering</div>
+                            <div class="text-sm text-gray-400">Design Patterns - 2 hours</div>
+                            <div class="text-xs text-blue-400 mt-1">⚠️ CRITICAL: No time after Nov 30th exam</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="text-xs text-gray-400">0/2h</div>
+                            <button class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">▶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory of Computation -->
+                <div class="task-card bg-gray-800 rounded-lg p-4 border-l-4 border-gray-600" data-task="theory-comp-1">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-300">Theory of Computation</div>
+                            <div class="text-sm text-gray-500">Regular Languages - 1 hour</div>
+                            <div class="text-xs text-gray-400 mt-1">Future prep (Nov 28-29)</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="text-xs text-gray-400">0/1h</div>
+                            <button class="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-white text-xs">▶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Electronic Devices -->
+                <div class="task-card bg-gray-800 rounded-lg p-4 border-l-4 border-gray-600" data-task="elec-dev-1">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-300">Electronic Devices</div>
+                            <div class="text-sm text-gray-500">Semiconductors - 1 hour</div>
+                            <div class="text-xs text-gray-400 mt-1">Device Tunnel phase (Nov 25-27)</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="text-xs text-gray-400">0/1h</div>
+                            <button class="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-white text-xs">▶</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Schedule -->
+        <div class="mb-6">
+            <h3 class="font-semibold text-white mb-4">Exam Countdown</h3>
+            <div class="space-y-3">
+                <!-- Nov 27 - Electronic Devices -->
+                <div class="warning-exam exam-countdown rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-semibold text-white">Electronic Devices</div>
+                            <div class="text-sm text-orange-200">Nov 27 - 5 days away</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl">⚡</div>
+                            <div class="text-xs text-orange-200">T-5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dec 1 - Double Header -->
+                <div class="critical-exam exam-countdown rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-semibold text-white">DOUBLE HEADER DAY</div>
+                            <div class="text-sm text-red-200">Dec 1 - Computational Stats + Software Eng</div>
+                            <div class="text-xs text-red-300 mt-1">🚨 ZERO GAP DAYS AFTER NOV 30TH EXAM</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl">🎯</div>
+                            <div class="text-xs text-red-200">T-9</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategic Phases -->
+        <div class="mb-20">
+            <h3 class="font-semibold text-white mb-4">Strategic Study Phases</h3>
+            <div class="space-y-3">
+                <!-- Phase 1: Front-Loading -->
+                <div class="phase-front phase-indicator bg-gray-800 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium text-blue-400">Phase 1: Front-Loading</div>
+                            <div class="text-sm text-gray-400">Nov 22-24 • Computational Stats + Software Eng</div>
+                            <div class="text-xs text-blue-300 mt-1">🎯 CRITICAL: Study now or guaranteed failure</div>
+                        </div>
+                        <div class="text-blue-400">
+                            <div class="text-2xl">📊</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Device Tunnel -->
+                <div class="phase-device phase-indicator bg-gray-800 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium text-orange-400">Phase 2: Device Tunnel</div>
+                            <div class="text-sm text-gray-400">Nov 25-27 • Electronic Devices Focus</div>
+                            <div class="text-xs text-orange-300 mt-1">⚡ Prepare for Nov 27 exam</div>
+                        </div>
+                        <div class="text-orange-400">
+                            <div class="text-2xl">🔌</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Computation Bridge -->
+                <div class="phase-computation phase-indicator bg-gray-800 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-medium text-green-400">Phase 3: Computation Bridge</div>
+                            <div class="text-sm text-gray-400">Nov 28-29 • Theory of Computation</div>
+                            <div class="text-xs text-green-300 mt-1">🧠 Use gap days wisely</div>
+                        </div>
+                        <div class="text-green-400">
+                            <div class="text-2xl">🧮</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-4 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <a href="index.html" class="flex flex-col items-center py-2 text-blue-400">
+                <div class="w-6 h-6 mb-1">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                    </svg>
+                </div>
+                <span class="text-xs">Command</span>
+            </a>
+            <a href="planner.html" class="flex flex-col items-center py-2 text-gray-400">
+                <div class="w-6 h-6 mb-1">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
+                    </svg>
+                </div>
+                <span class="text-xs">Planner</span>
+            </a>
+            <a href="progress.html" class="flex flex-col items-center py-2 text-gray-400">
+                <div class="w-6 h-6 mb-1">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                    </svg>
+                </div>
+                <span class="text-xs">Progress</span>
+            </a>
+            <a href="resources.html" class="flex flex-col items-center py-2 text-gray-400">
+                <div class="w-6 h-6 mb-1">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                    </svg>
+                </div>
+                <span class="text-xs">Resources</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Task completion functionality
+        document.querySelectorAll('.task-card').forEach(card => {
+            card.addEventListener('click', function() {
+                if (!this.classList.contains('completed')) {
+                    this.classList.add('completed');
+                    this.classList.remove('bg-gray-800');
+                    this.classList.add('completed-task');
+                    
+                    // Update button
+                    const button = this.querySelector('button');
+                    button.innerHTML = '✓';
+                    button.classList.remove('bg-blue-600', 'bg-gray-600');
+                    button.classList.add('bg-green-600');
+                    
+                    // Update progress
+                    updateProgress();
+                    
+                    // Show completion animation
+                    anime({
+                        targets: this,
+                        scale: [1, 1.05, 1],
+                        duration: 300,
+                        easing: 'easeOutElastic(1, .8)'
+                    });
+                    
+                    // Show notification
+                    showNotification('Task completed! Keep going! 💪');
+                }
+            });
+        });
+
+        function updateProgress() {
+            const completedTasks = document.querySelectorAll('.task-card.completed').length;
+            const totalTasks = document.querySelectorAll('.task-card').length;
+            const percentage = Math.round((completedTasks / totalTasks) * 100);
+            
+            // Update progress ring
+            const circle = document.getElementById('progress-circle');
+            const circumference = 2 * Math.PI * 54;
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            
+            // Update percentage display
+            document.getElementById('progress-percentage').textContent = percentage + '%';
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 left-4 right-4 bg-blue-600 rounded-lg shadow-lg p-4 z-50 transform -translate-y-full transition-transform duration-300';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="text-2xl">🎯</div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-white">Mission Update</div>
+                        <div class="text-xs text-blue-200">${message}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateY(-100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize progress
+        updateProgress();
+
+        // Add floating particles animation
+        anime({
+            targets: '.particle',
+            translateY: [0, -30, 0],
+            translateX: [0, 20, 0],
+            opacity: [0.3, 0.8, 0.3],
+            scale: [0.8, 1.2, 0.8],
+            duration: 8000,
+            easing: 'easeInOutSine',
+            loop: true,
+            delay: anime.stagger(2000)
+        });
+    </script>
+</body>
+</html>
