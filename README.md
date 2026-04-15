@@ -1,20 +1,46 @@
-# Exam Command Center
+# ⚡ Exam Command Center
 
-Exam Command Center is a centralized platform designed to automate and streamline exam operations.  
-This includes question paper organization, schedule management, command sheet generation, and secure handling of exam resources.
+A premium, modern exam preparation command center built with pure HTML, CSS, and JavaScript. Features glassmorphism design, animated backgrounds, real-time countdowns, and a strategic study planning system.
 
-## Features
-- Structured exam resource management
-- Automated command sheet generation
-- Organized folder system for institutions
-- Easy updates and accessibility
+## 🎯 Features
 
-## Technologies
-- GitHub Repository Management
-- Scripts / Automation Tools (optional)
-- Structured File System
+- **Dashboard** — Key metrics, exam countdowns, daily tasks, and study phase timeline
+- **Strategic Planner** — Day-by-day study schedule with task management
+- **Progress Analytics** — Subject readiness, study pattern charts, strategic insights, and risk matrix
+- **Combat Resources** — Flashcards, formula sheets, study techniques, and strategic notes
 
-## How to Use
-1. Clone the repository
-2. Add or modify exam files inside relevant folders
-3. Commit and push changes to maintain version history
+## 🚀 Getting Started
+
+Open `index.html` directly in your browser, or serve it locally:
+
+```bash
+python -m http.server 8090
+```
+
+Then visit `http://localhost:8090`.
+
+## 🛠️ Tech Stack
+
+- **HTML5** — Semantic structure
+- **Vanilla CSS** — Custom design system with CSS variables, glassmorphism, and animations
+- **Vanilla JavaScript** — SPA routing, state management via localStorage
+- **ECharts** — Study pattern visualizations
+
+## ⌨️ Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `1` | Dashboard |
+| `2` | Strategic Planner |
+| `3` | Progress Analytics |
+| `4` | Combat Resources |
+| `Esc` | Close sidebar (mobile) |
+
+## 📁 File Structure
+
+```
+├── index.html    # Single-page application
+├── styles.css    # Design system & components
+├── app.js        # Application logic
+└── resources/    # Image assets
+```
